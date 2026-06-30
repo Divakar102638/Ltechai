@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>InterviewAI — L.TECH Solutions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{
+  --bg:#07070f;--surface:#0f1117;--surface2:#161b26;--surface3:#1c2333;
+  --border:#1e2d45;--accent:#3b82f6;--accent2:#06b6d4;--purple:#8b5cf6;
+  --green:#10b981;--red:#ef4444;--yellow:#f59e0b;--orange:#f97316;
+  --text:#e2e8f0;--muted:#64748b;--code-bg:#0d1117;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+.hidden{display:none!important;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ════════════════════════════════════
+   AUTH SCREENS
+════════════════════════════════════ */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(ellipse at 20% 50%,rgba(59,130,246,0.08) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 20%,rgba(139,92,246,0.06) 0%,transparent 60%);}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;
+  padding:40px;width:100%;max-width:480px;}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px;}
+.auth-logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.auth-logo-text{font-size:20px;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.auth-card h2{font-size:24px;font-weight:700;color:#fff;margin-bottom:6px;}
+.auth-card p{color:var(--muted);font-size:14px;margin-bottom:28px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-grid.full{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:6px;}
+.fg label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.fg input,.fg select{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;
+  padding:11px 14px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;
+  transition:border-color .2s;}
+.fg input:focus,.fg select:focus{border-color:var(--accent);}
+.fg select option{background:var(--surface2);}
+.auth-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  margin-top:6px;transition:opacity .2s,transform .1s;}
+.auth-btn:hover{opacity:.9;transform:translateY(-1px);}
+.auth-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--muted);}
+.auth-switch a{color:var(--accent);cursor:pointer;text-decoration:none;font-weight:600;}
+.auth-switch a:hover{text-decoration:underline;}
+.auth-msg{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;
+  padding:14px 16px;margin-top:16px;font-size:13px;color:var(--green);display:none;}
+.auth-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;
+  padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--red);display:none;}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.feat-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;font-size:12px;color:var(--muted);}
+.feat-item span{display:block;font-size:18px;margin-bottom:4px;}
+
+/* ════════════════════════════════════
+   MAIN DASHBOARD
+════════════════════════════════════ */
+#screen-dashboard{display:none;min-height:100vh;flex-direction:column;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;
+  background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;color:var(--accent);}
+.nav-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.nav-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:10px;padding:4px;}
+.nav-tab{padding:7px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;
+  color:var(--muted);transition:all .2s;border:none;background:transparent;}
+.nav-tab.active{background:var(--accent);color:#fff;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.avatar-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:20px;padding:6px 14px 6px 8px;font-size:13px;}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.logout-btn{padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;
+  color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+.db-body{flex:1;padding:28px;max-width:1100px;margin:0 auto;width:100%;}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.stat-card .val{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px;}
+.stat-card .lbl{font-size:12px;color:var(--muted);}
+.stat-card .icon{font-size:22px;margin-bottom:10px;}
+
+/* Start button hero */
+.start-hero{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(139,92,246,.08));
+  border:1px solid rgba(59,130,246,.2);border-radius:18px;padding:28px;margin-bottom:28px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.start-hero h3{font-size:20px;font-weight:700;color:#fff;margin-bottom:6px;}
+.start-hero p{font-size:14px;color:var(--muted);}
+.start-hero-btn{flex-shrink:0;padding:13px 28px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;
+  white-space:nowrap;transition:opacity .2s;}
+.start-hero-btn:hover{opacity:.9;}
+
+/* History table */
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.section-hd h3{font-size:16px;font-weight:700;color:#fff;}
+.history-list{display:flex;flex-direction:column;gap:10px;}
+.hist-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:16px 20px;display:flex;align-items:center;gap:16px;transition:border-color .2s;}
+.hist-item:hover{border-color:var(--accent);}
+.hist-score{width:52px;height:52px;border-radius:50%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:15px;}
+.hist-info{flex:1;}
+.hist-info h4{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px;}
+.hist-info p{font-size:12px;color:var(--muted);}
+.hist-badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-state .icon{font-size:48px;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+/* Profile tab */
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px;
+  max-width:500px;}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin-bottom:16px;}
+.profile-name{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;}
+.profile-sub{font-size:14px;color:var(--muted);margin-bottom:24px;}
+.profile-rows{display:flex;flex-direction:column;gap:12px;}
+.profile-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--border);}
+.profile-row:last-child{border-bottom:none;}
+.profile-row .k{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;}
+.profile-row .v{font-size:14px;color:var(--text);}
+
+/* ════════════════════════════════════
+   SETUP MODAL
+════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;
+  display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:22px;
+  padding:36px;width:100%;max-width:560px;position:relative;}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;color:var(--muted);}
+.modal-box h2{font-size:20px;font-weight:700;color:#fff;margin-bottom:6px;}
+.modal-box p{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;max-height:180px;overflow-y:auto;}
+.role-chip{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;
+  color:var(--muted);cursor:pointer;text-align:center;transition:all .2s;background:var(--surface2);}
+.role-chip:hover{border-color:var(--accent);color:var(--text);}
+.role-chip.active{border-color:var(--accent);background:rgba(59,130,246,.15);color:var(--accent);font-weight:600;}
+.seg-group{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.seg-btn{padding:10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);
+  color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;}
+.seg-btn.active{border-color:var(--accent);background:rgba(59,130,246,.15);color:var(--accent);}
+.modal-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--muted);margin-bottom:8px;}
+.modal-start-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  margin-top:20px;transition:opacity .2s;}
+.modal-start-btn:hover{opacity:.9;}
+.modal-start-btn:disabled{opacity:.5;cursor:not-allowed;}
+.modal-back-btn{background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:9px 16px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:18px;}
+.modal-back-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Mode choice */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px;}
+.mode-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:16px;
+  padding:24px 18px;text-align:center;cursor:pointer;transition:all .2s;}
+.mode-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.mode-card .mc-icon{font-size:34px;margin-bottom:10px;}
+.mode-card h4{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;}
+.mode-card p{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* Resume upload */
+.resume-drop{border:2px dashed var(--border);border-radius:14px;padding:28px 18px;text-align:center;
+  cursor:pointer;transition:all .2s;margin-bottom:16px;background:var(--surface2);}
+.resume-drop:hover,.resume-drop.drag{border-color:var(--accent);background:rgba(59,130,246,.06);}
+.resume-drop .rd-icon{font-size:30px;margin-bottom:8px;}
+.resume-drop .rd-text{font-size:13px;color:var(--text);font-weight:600;margin-bottom:4px;}
+.resume-drop .rd-sub{font-size:11px;color:var(--muted);}
+.resume-file-chip{display:flex;align-items:center;gap:10px;background:rgba(16,185,129,.1);
+  border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:13px;}
+.resume-file-chip .rfx{margin-left:auto;cursor:pointer;color:var(--red);font-weight:700;}
+.resume-skills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.resume-skill-tag{background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);
+  color:var(--purple);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+
+/* Self webcam preview in AI panel */
+.self-cam-wrap{position:relative;width:170px;height:128px;border-radius:14px;overflow:hidden;
+  border:2px solid var(--border);background:#000;margin-top:18px;}
+.self-cam-wrap video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block;}
+.self-cam-label{position:absolute;bottom:4px;left:6px;font-size:10px;font-weight:700;color:#fff;
+  background:rgba(0,0,0,.55);padding:2px 7px;border-radius:6px;letter-spacing:.5px;}
+.rec-dot{position:absolute;top:6px;left:6px;display:flex;align-items:center;gap:5px;
+  background:rgba(0,0,0,.55);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;color:#fff;}
+.rec-dot .dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink 1s infinite;}
+.cam-off-msg{font-size:10px;color:var(--muted);text-align:center;padding:8px;}
+
+/* Answer input area */
+.answer-input-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.ai-toggle-row{display:flex;gap:6px;margin-bottom:10px;}
+.ai-toggle-btn{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);
+  background:var(--surface2);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.ai-toggle-btn.active{border-color:var(--accent);background:rgba(59,130,246,.15);color:var(--accent);}
+.answer-textarea{width:100%;min-height:90px;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:10px;padding:12px;color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;
+  resize:vertical;outline:none;}
+.answer-textarea:focus{border-color:var(--accent);}
+.answer-actions{display:flex;gap:8px;margin-top:10px;}
+.mic-btn{padding:10px 16px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface2);
+  color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mic-btn.listening{border-color:var(--red);background:rgba(239,68,68,.12);color:var(--red);animation:pulse-glow2 1s infinite alternate;}
+@keyframes pulse-glow2{from{box-shadow:0 0 0 rgba(239,68,68,.4);}to{box-shadow:0 0 14px rgba(239,68,68,.5);}}
+.submit-ans-btn{flex:1;padding:10px 16px;border-radius:9px;border:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;
+  font-weight:700;cursor:pointer;transition:opacity .2s;}
+.submit-ans-btn:hover{opacity:.9;}
+.submit-ans-btn:disabled{opacity:.5;cursor:not-allowed;}
+.tab-warn-banner{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:var(--yellow);
+  border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;margin-bottom:6px;display:none;}
+.tab-warn-banner.show{display:block;}
+
+/* ════════════════════════════════════
+   INTERVIEW ROOM
+════════════════════════════════════ */
+#screen-interview{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;}
+.ir-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;
+  background:var(--surface);border-bottom:1px solid var(--border);}
+.ir-badges{display:flex;gap:10px;align-items:center;}
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.b-live{background:rgba(239,68,68,.2);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.b-domain{background:rgba(59,130,246,.15);color:var(--accent);border:1px solid rgba(59,130,246,.3);}
+.b-level{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3);}
+.ir-progress-wrap{height:3px;background:var(--border);}
+.ir-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s;}
+.end-interview-btn{padding:8px 16px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);
+  border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.end-interview-btn:hover{background:rgba(239,68,68,.25);}
+.ir-body{flex:1;display:grid;grid-template-columns:340px 1fr;overflow:hidden;}
+
+/* AI Panel */
+.ai-panel{border-right:1px solid var(--border);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:28px;
+  background:radial-gradient(ellipse at center,#0f1929 0%,var(--bg) 70%);}
+.ai-avatar-wrap{position:relative;width:160px;height:160px;margin-bottom:20px;}
+.ai-ring1{position:absolute;inset:-10px;border-radius:50%;border:2px solid transparent;
+  border-top-color:var(--accent);animation:spin 3s linear infinite;}
+.ai-ring2{position:absolute;inset:-20px;border-radius:50%;border:1px solid transparent;
+  border-bottom-color:var(--accent2);animation:spin 5s linear infinite reverse;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-face{width:160px;height:160px;border-radius:50%;
+  background:linear-gradient(145deg,#1a2744,#0d1829);border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;}
+.ai-face::after{content:'';position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(59,130,246,.15),transparent 60%);}
+.ai-speaking .ai-face{animation:pulse-glow .6s ease-in-out infinite alternate;}
+@keyframes pulse-glow{
+  from{box-shadow:0 0 20px rgba(59,130,246,.3);}
+  to{box-shadow:0 0 50px rgba(59,130,246,.7),0 0 80px rgba(6,182,212,.3);}
+}
+.ai-name{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;}
+.ai-status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:16px;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.voice-bars{display:flex;align-items:flex-end;gap:3px;height:36px;}
+.vb{width:5px;background:var(--accent);border-radius:3px;}
+.speaking .vb:nth-child(1){animation:va .4s .0s ease-in-out infinite alternate;}
+.speaking .vb:nth-child(2){animation:va .4s .1s ease-in-out infinite alternate;}
+.speaking .vb:nth-child(3){animation:va .4s .2s ease-in-out infinite alternate;}
+.speaking .vb:nth-child(4){animation:va .4s .05s ease-in-out infinite alternate;}
+.speaking .vb:nth-child(5){animation:va .4s .15s ease-in-out infinite alternate;}
+.speaking .vb:nth-child(6){animation:va .4s .25s ease-in-out infinite alternate;}
+.speaking .vb:nth-child(7){animation:va .4s .08s ease-in-out infinite alternate;}
+@keyframes va{from{height:5px;}to{height:30px;}}
+
+/* Question Panel */
+.q-panel{display:flex;flex-direction:column;padding:24px;overflow-y:auto;gap:14px;}
+.q-phase{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;}
+.q-text{font-size:16px;line-height:1.7;color:var(--text);font-weight:500;}
+.code-block{background:var(--code-bg);border:1px solid #21262d;border-radius:10px;padding:16px;
+  margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#e6edf3;
+  overflow-x:auto;line-height:1.75;white-space:pre;}
+.code-block .kw{color:#ff7b72;}.code-block .fn{color:#d2a8ff;}.code-block .str{color:#a5d6ff;}
+.code-block .num{color:#79c0ff;}.code-block .cm{color:#8b949e;}.code-block .var{color:#ffa657;}
+
+/* Timer */
+.timer-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;}
+.timer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.timer-label{font-size:12px;color:var(--muted);}
+.timer-num{font-size:24px;font-weight:800;font-family:'JetBrains Mono',monospace;color:#fff;}
+.timer-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.timer-fill{height:100%;border-radius:3px;transition:width 1s linear,background .5s;}
+
+/* Answer cards */
+.ans-card{background:var(--surface);border:1px solid rgba(16,185,129,.3);border-radius:14px;padding:20px;}
+.out-card{background:var(--code-bg);border:1px solid rgba(245,158,11,.3);border-radius:14px;padding:20px;}
+.exp-card{background:var(--surface);border:1px solid rgba(59,130,246,.3);border-radius:14px;padding:20px;}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.ct-green{color:var(--green);}.ct-yellow{color:var(--yellow);}.ct-blue{color:var(--accent);}
+.card-body{font-size:13px;line-height:1.7;color:var(--text);}
+.output-text{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#a5d6ff;white-space:pre;line-height:1.6;}
+.next-q-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.next-q-btn:hover{opacity:.9;}
+
+/* Scoring panel */
+.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.score-metric{background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;text-align:center;}
+.score-metric .sv{font-size:20px;font-weight:800;color:#fff;}
+.score-metric .sl{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ════════════════════════════════════
+   RESULTS
+════════════════════════════════════ */
+#screen-results{display:none;position:fixed;inset:0;background:var(--bg);z-index:600;
+  overflow-y:auto;padding:40px 20px;}
+.results-wrap{max-width:700px;margin:0 auto;}
+.score-hero{text-align:center;margin-bottom:40px;}
+.big-score{font-size:80px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.big-score-sub{font-size:14px;color:var(--muted);margin-top:4px;}
+.score-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px;}
+.sm-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+.sm-val{font-size:22px;font-weight:800;color:#fff;}.sm-lbl{font-size:11px;color:var(--muted);}
+.result-list{display:flex;flex-direction:column;gap:16px;margin-top:32px;}
+.result-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;}
+.result-item h4{font-size:14px;color:#fff;margin-bottom:12px;font-weight:600;}
+.ri-ans{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:6px;}
+.ri-exp{font-size:12px;color:var(--muted);line-height:1.6;}
+.results-actions{display:flex;gap:12px;margin-top:32px;}
+.res-btn{flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.res-btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;}
+.res-btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text);}
+.res-btn:hover{opacity:.85;}
+
+/* ════════════════════════════════════
+   ALERT OVERLAY
+════════════════════════════════════ */
+.alert-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;
+  display:none;align-items:center;justify-content:center;}
+.alert-ov.show{display:flex;}
+.alert-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:36px;max-width:400px;width:90%;text-align:center;}
+.alert-box .ai{font-size:44px;margin-bottom:14px;}
+.alert-box h3{font-size:19px;color:#fff;margin-bottom:8px;}
+.alert-box p{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:22px;}
+.alert-btns{display:flex;gap:10px;}
+.abtn-stay{flex:1;padding:12px;background:var(--accent);border:none;border-radius:10px;
+  color:#fff;font-weight:700;cursor:pointer;font-size:14px;}
+.abtn-leave{flex:1;padding:12px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-weight:700;cursor:pointer;font-size:14px;}
+
+/* Typing cursor */
+.tc{display:inline-block;width:2px;height:.9em;background:var(--accent);
+  margin-left:2px;animation:tc-blink .7s step-end infinite;vertical-align:text-bottom;}
+@keyframes tc-blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.fade-in{animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+@media(max-width:700px){
+  .ir-body{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
+  .ai-panel{border-right:none;border-bottom:1px solid var(--border);padding:16px;min-height:auto;}
+  .ai-avatar-wrap{width:100px;height:100px;}.ai-face{width:100px;height:100px;font-size:40px;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .score-metrics,.score-row{grid-template-columns:repeat(2,1fr);}
+  .form-grid{grid-template-columns:1fr;}
+  .start-hero{flex-direction:column;}
+  .top-nav{padding:12px 16px;}
+  .nav-tabs{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ REGISTER ═══════════════ -->
+<div id="screen-register" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🤖</div>
+      <div class="auth-logo-text">InterviewAI</div>
+    </div>
+    <h2>Create Account</h2>
+    <p>Join L.TECH Solutions' free AI interview platform</p>
+    <div class="feat-grid">
+      <div class="feat-item"><span>🤖</span>AI Face-to-Face Interview</div>
+      <div class="feat-item"><span>📊</span>Instant Scoring</div>
+      <div class="feat-item"><span>💻</span>50+ Roles & Domains</div>
+      <div class="feat-item"><span>📈</span>Progress History</div>
+    </div>
+    <div class="auth-err" id="reg-err"></div>
+    <div class="form-grid">
+      <div class="fg"><label>First Name</label><input id="r-fname" placeholder="e.g. Divakar"/></div>
+      <div class="fg"><label>Last Name</label><input id="r-lname" placeholder="e.g. Bethapudi"/></div>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label>Email</label><input id="r-email" type="email" placeholder="you@email.com"/></div>
+      <div class="fg"><label>Phone</label><input id="r-phone" placeholder="10-digit number"/></div>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label>College / Institution</label><input id="r-college" placeholder="College name"/></div>
+      <div class="fg"><label>Degree / Course</label><input id="r-degree" placeholder="B.Tech, MCA…"/></div>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label>Year of Study</label>
+        <select id="r-year">
+          <option value="">Select year</option>
+          <option>1st Year</option><option>2nd Year</option><option>3rd Year</option>
+          <option>4th Year</option><option>Graduated</option><option>Working Professional</option>
+        </select>
+      </div>
+      <div class="fg"><label>Password</label><input id="r-pass" type="password" placeholder="Min. 6 chars"/></div>
+    </div>
+    <button class="auth-btn" onclick="doRegister()">Create My Account →</button>
+    <div class="auth-msg" id="reg-msg"></div>
+    <div class="auth-switch">Already have an account? <a onclick="showScreen('login')">Sign in →</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="screen-login" class="auth-wrap hidden">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🤖</div>
+      <div class="auth-logo-text">InterviewAI</div>
+    </div>
+    <h2>Welcome Back</h2>
+    <p>Sign in to continue your interview practice journey</p>
+    <div class="auth-err" id="login-err"></div>
+    <div class="form-grid full">
+      <div class="fg"><label>Login ID</label><input id="l-id" placeholder="Your unique Login ID"/></div>
+    </div>
+    <div class="form-grid full">
+      <div class="fg"><label>Password</label><input id="l-pass" type="password" placeholder="Your password"/></div>
+    </div>
+    <button class="auth-btn" onclick="doLogin()">Sign In →</button>
+    <div class="auth-switch">New here? <a onclick="showScreen('register')">Create an account →</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div id="screen-dashboard" style="display:none;flex-direction:column;min-height:100vh;">
+  <nav class="top-nav">
+    <div class="nav-logo"><div class="nav-logo-icon">🤖</div>InterviewAI</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('overview')">Overview</button>
+      <button class="nav-tab" onclick="switchTab('history')">My History</button>
+      <button class="nav-tab" onclick="switchTab('profile')">Profile</button>
+    </div>
+    <div class="nav-right">
+      <div class="avatar-chip">
+        <div class="avatar" id="nav-avatar">?</div>
+        <span id="nav-name">User</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="db-body">
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview">
+      <div class="stats-row">
+        <div class="stat-card"><div class="icon">📋</div><div class="val" id="stat-total">0</div><div class="lbl">Total Sessions</div></div>
+        <div class="stat-card"><div class="icon">🏆</div><div class="val" id="stat-best">—</div><div class="lbl">Best Score</div></div>
+        <div class="stat-card"><div class="icon">📈</div><div class="val" id="stat-avg">—</div><div class="lbl">Average Score</div></div>
+        <div class="stat-card"><div class="icon">🗓️</div><div class="val" id="stat-week">0</div><div class="lbl">This Week</div></div>
+      </div>
+      <div class="start-hero">
+        <div>
+          <h3>🚀 Ready for your next interview?</h3>
+          <p>Practice with AI across 50+ roles — IT, Non-IT, HR, and more</p>
+        </div>
+        <button class="start-hero-btn" onclick="openSetup()">+ Start New Interview</button>
+      </div>
+      <div class="section-hd"><h3>Recent Sessions</h3></div>
+      <div class="history-list" id="recent-list"></div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div id="tab-history" class="hidden">
+      <div class="section-hd">
+        <h3>All Interview Sessions</h3>
+        <button class="start-hero-btn" onclick="openSetup()" style="padding:9px 18px;font-size:13px;">+ New Interview</button>
+      </div>
+      <div class="history-list" id="full-history-list"></div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div id="tab-profile" class="hidden">
+      <div class="profile-card">
+        <div class="profile-avatar" id="prof-avatar">?</div>
+        <div class="profile-name" id="prof-name">—</div>
+        <div class="profile-sub" id="prof-college">—</div>
+        <div class="profile-rows">
+          <div class="profile-row"><span class="k">Login ID</span><span class="v" id="prof-id">—</span></div>
+          <div class="profile-row"><span class="k">Email</span><span class="v" id="prof-email">—</span></div>
+          <div class="profile-row"><span class="k">Phone</span><span class="v" id="prof-phone">—</span></div>
+          <div class="profile-row"><span class="k">Degree</span><span class="v" id="prof-degree">—</span></div>
+          <div class="profile-row"><span class="k">Year</span><span class="v" id="prof-year">—</span></div>
+          <div class="profile-row"><span class="k">Joined</span><span class="v" id="prof-joined">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SETUP MODAL ═══════════════ -->
+<div class="modal-overlay" id="setup-modal">
+  <div class="modal-box">
+    <div class="modal-close" onclick="closeSetup()">✕</div>
+
+    <!-- STEP 0 — MODE CHOICE -->
+    <div id="setup-step-mode">
+      <h2>🎯 New Interview Session</h2>
+      <p>How would you like your questions generated?</p>
+      <div class="mode-grid">
+        <div class="mode-card" onclick="chooseMode('resume')">
+          <div class="mc-icon">📄</div>
+          <h4>Resume-Based</h4>
+          <p>Upload your resume — questions are generated from your real skills &amp; experience. 20 questions.</p>
+        </div>
+        <div class="mode-card" onclick="chooseMode('domain')">
+          <div class="mc-icon">🧭</div>
+          <h4>Domain-Based</h4>
+          <p>Pick a role/domain from our bank of 200+ questions per set. Fixed 15 questions.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1A — RESUME UPLOAD -->
+    <div id="setup-step-resume" class="hidden">
+      <button class="modal-back-btn" onclick="backToMode()">← Back</button>
+      <h2>📄 Resume-Based Interview</h2>
+      <p>Upload your resume (PDF, DOCX or TXT) — we'll tailor 20 questions to it</p>
+
+      <div id="resume-drop-zone" class="resume-drop" onclick="document.getElementById('resume-file-input').click()"
+           ondragover="event.preventDefault();this.classList.add('drag');"
+           ondragleave="this.classList.remove('drag');"
+           ondrop="event.preventDefault();this.classList.remove('drag');handleResumeFile(event.dataTransfer.files[0]);">
+        <div class="rd-icon">📤</div>
+        <div class="rd-text">Click to upload or drag &amp; drop</div>
+        <div class="rd-sub">.pdf · .docx · .doc · .txt — max 5MB</div>
+      </div>
+      <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx,.txt" class="hidden" onchange="handleResumeFile(this.files[0])"/>
+      <div id="resume-file-chip" class="resume-file-chip hidden">
+        <span>📎</span><span id="resume-file-name">—</span>
+        <span class="rfx" onclick="clearResumeFile()">✕ Remove</span>
+      </div>
+      <div id="resume-skills-wrap" class="hidden">
+        <div class="modal-label">Detected Skills / Keywords</div>
+        <div class="resume-skills" id="resume-skills"></div>
+      </div>
+
+      <div class="modal-label">Interview Type</div>
+      <div class="seg-group">
+        <div class="seg-btn active" data-type="technical" onclick="selectSeg(this,'type')">Technical Round</div>
+        <div class="seg-btn" data-type="hr" onclick="selectSeg(this,'type')">HR / Behavioral</div>
+        <div class="seg-btn" data-type="mixed" onclick="selectSeg(this,'type')">Mixed</div>
+      </div>
+      <div class="modal-label">Difficulty</div>
+      <div class="seg-group">
+        <div class="seg-btn active" data-diff="basic" onclick="selectSeg(this,'diff')">🟢 Basic</div>
+        <div class="seg-btn" data-diff="intermediate" onclick="selectSeg(this,'diff')">🟡 Intermediate</div>
+        <div class="seg-btn" data-diff="advanced" onclick="selectSeg(this,'diff')">🔴 Advanced</div>
+      </div>
+      <button class="modal-start-btn" id="resume-start-btn" onclick="startInterview('resume')" disabled>Upload a resume to continue</button>
+    </div>
+
+    <!-- STEP 1B — DOMAIN SELECT -->
+    <div id="setup-step-domain" class="hidden">
+      <button class="modal-back-btn" onclick="backToMode()">← Back</button>
+      <h2>🧭 Domain-Based Interview</h2>
+      <p>Choose your role, type, and difficulty — 15 fixed questions per set</p>
+      <div class="modal-label">Category</div>
+      <div class="seg-group" style="grid-template-columns:1fr 1fr;">
+        <div class="seg-btn active" data-cat="it" onclick="selectSeg(this,'cat')">💻 IT / Tech</div>
+        <div class="seg-btn" data-cat="nonit" onclick="selectSeg(this,'cat')">🏢 Non-IT</div>
+      </div>
+      <div class="modal-label">Role / Domain</div>
+      <div class="role-grid" id="role-grid"></div>
+      <div class="modal-label">Interview Type</div>
+      <div class="seg-group">
+        <div class="seg-btn active" data-type="technical" onclick="selectSeg(this,'type')">Technical Round</div>
+        <div class="seg-btn" data-type="hr" onclick="selectSeg(this,'type')">HR / Behavioral</div>
+        <div class="seg-btn" data-type="mixed" onclick="selectSeg(this,'type')">Mixed</div>
+      </div>
+      <div class="modal-label">Difficulty</div>
+      <div class="seg-group">
+        <div class="seg-btn active" data-diff="basic" onclick="selectSeg(this,'diff')">🟢 Basic</div>
+        <div class="seg-btn" data-diff="intermediate" onclick="selectSeg(this,'diff')">🟡 Intermediate</div>
+        <div class="seg-btn" data-diff="advanced" onclick="selectSeg(this,'diff')">🔴 Advanced</div>
+      </div>
+      <button class="modal-start-btn" onclick="startInterview('domain')">Start Interview (15 Qs) →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ INTERVIEW ROOM ═══════════════ -->
+<div id="screen-interview" style="display:none;flex-direction:column;">
+  <div class="ir-progress-wrap"><div class="ir-progress-fill" id="ir-prog" style="width:0%"></div></div>
+  <div class="ir-topbar">
+    <div class="ir-badges">
+      <div class="badge b-live">🔴 LIVE</div>
+      <div class="badge b-domain" id="ir-domain-badge">Python</div>
+      <div class="badge b-level" id="ir-level-badge">Basic</div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);">Q <span id="ir-qnum" style="color:#fff;font-weight:700;">1</span> / <span id="ir-qtotal">10</span></div>
+    <button class="end-interview-btn" onclick="confirmEnd()">✕ End Interview</button>
+  </div>
+  <div class="ir-body">
+    <!-- AI Face -->
+    <div class="ai-panel" id="ai-panel">
+      <div class="ai-avatar-wrap" id="ai-avatar-wrap">
+        <div class="ai-ring1"></div><div class="ai-ring2"></div>
+        <div class="ai-face" id="ai-face">🤖</div>
+      </div>
+      <div class="ai-name">ARIA — AI Interviewer</div>
+      <div class="ai-status"><div class="status-dot"></div><span id="ai-status-text">Ready</span></div>
+      <div class="voice-bars" id="voice-bars">
+        <div class="vb" style="height:6px"></div><div class="vb" style="height:14px"></div>
+        <div class="vb" style="height:22px"></div><div class="vb" style="height:30px"></div>
+        <div class="vb" style="height:18px"></div><div class="vb" style="height:10px"></div>
+        <div class="vb" style="height:7px"></div>
+      </div>
+      <div class="self-cam-wrap" id="self-cam-wrap">
+        <video id="self-cam-video" autoplay playsinline muted></video>
+        <div class="rec-dot hidden" id="rec-dot"><div class="dot"></div>REC</div>
+        <div class="self-cam-label">YOU</div>
+      </div>
+      <div class="cam-off-msg hidden" id="cam-off-msg">Camera/mic not available — recording disabled, interview continues normally.</div>
+    </div>
+    <!-- Q Panel -->
+    <div class="q-panel" id="q-panel">
+      <div class="tab-warn-banner" id="tab-warn-banner">⚠️ Tab/window switch detected — timer paused. Switching away too often may be flagged.</div>
+      <div class="q-phase" id="q-phase">📡 ARIA is preparing...</div>
+      <div class="q-box">
+        <div class="q-text" id="q-text"></div>
+        <div class="code-block hidden" id="q-code"></div>
+      </div>
+      <div class="timer-bar-wrap hidden" id="timer-wrap">
+        <div class="timer-top">
+          <div class="timer-label">⏱ Time to answer</div>
+          <div class="timer-num" id="timer-num">1:00</div>
+        </div>
+        <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="answer-input-wrap hidden" id="answer-input-wrap">
+        <div class="ai-toggle-row">
+          <button class="ai-toggle-btn active" id="mode-type-btn" onclick="setAnswerMode('type')">⌨️ Type</button>
+          <button class="ai-toggle-btn" id="mode-speak-btn" onclick="setAnswerMode('speak')">🎤 Speak</button>
+        </div>
+        <textarea class="answer-textarea" id="answer-textarea" placeholder="Type your answer here, or switch to Speak mode..."></textarea>
+        <div class="answer-actions">
+          <button class="mic-btn hidden" id="mic-btn" onclick="toggleMic()">🎤 Start Speaking</button>
+          <button class="submit-ans-btn" onclick="submitAnswer()">Submit Answer →</button>
+        </div>
+      </div>
+      <div class="ans-card hidden fade-in" id="ans-card">
+        <div class="card-title ct-green">✅ Answer</div>
+        <div class="card-body" id="ans-body"></div>
+      </div>
+      <div class="out-card hidden fade-in" id="out-card">
+        <div class="card-title ct-yellow">⚡ Output / Result</div>
+        <div class="output-text" id="out-body"></div>
+      </div>
+      <div class="exp-card hidden fade-in" id="exp-card">
+        <div class="card-title ct-blue">💡 Explanation</div>
+        <div class="card-body" id="exp-body"></div>
+      </div>
+      <button class="next-q-btn hidden" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ RESULTS ═══════════════ -->
+<div id="screen-results" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:600;overflow-y:auto;padding:40px 20px;">
+  <div class="results-wrap">
+    <div class="score-hero">
+      <div class="big-score" id="res-score">8.5</div>
+      <div class="big-score-sub">Overall Score / 10</div>
+      <div class="score-metrics">
+        <div class="sm-card"><div class="sm-val" id="rm-tech">—</div><div class="sm-lbl">Technical</div></div>
+        <div class="sm-card"><div class="sm-val" id="rm-clarity">—</div><div class="sm-lbl">Clarity</div></div>
+        <div class="sm-card"><div class="sm-val" id="rm-depth">—</div><div class="sm-lbl">Depth</div></div>
+        <div class="sm-card"><div class="sm-val" id="rm-conf">—</div><div class="sm-lbl">Confidence</div></div>
+      </div>
+    </div>
+    <div class="result-list" id="result-list"></div>
+    <div class="results-actions">
+      <button class="res-btn res-btn-secondary" onclick="practiceAgain()">Practice Again</button>
+      <button class="res-btn res-btn-primary" onclick="goToDashboard()">Go to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ALERT -->
+<div class="alert-ov" id="alert-ov">
+  <div class="alert-box">
+    <div class="ai">⚠️</div>
+    <h3>Leave Interview?</h3>
+    <p>Your interview is still in progress. Leaving now will end the session and scores won't be saved.</p>
+    <div class="alert-btns">
+      <button class="abtn-stay" onclick="stayIn()">Stay in Interview</button>
+      <button class="abtn-leave" onclick="leaveInterview()">End Session</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  ROLES
+// ═══════════════════════════════════════════════════
+const ROLES = {
+  it: ['Python Developer','Java Developer','JavaScript / Frontend','Full Stack Developer',
+       'Data Science / ML','Data Structures & Algorithms','Database (SQL/DBMS)',
+       'Operating Systems','Computer Networks','DevOps / Cloud','Cybersecurity',
+       'Mobile Dev (Android/iOS)','C / C++','System Design','AI / Prompt Engineering'],
+  nonit: ['HR / Behavioral','Marketing Manager','Sales Executive','Finance Analyst',
+          'Business Analyst','Content Writer','Operations Manager','Product Manager',
+          'Customer Support','Logistics / Supply Chain']
+};
+
+// ═══════════════════════════════════════════════════
+//  TOPIC POOLS — used to auto-generate ~200 Qs/domain
+// ═══════════════════════════════════════════════════
+const TOPICS={
+  'Python Developer':['variables and data types','lists vs tuples','dictionaries','sets','string formatting','functions and *args/**kwargs','lambda functions','list/dict comprehensions','exception handling','file handling','OOP and classes','inheritance and polymorphism','decorators','generators and iterators','context managers (with)','modules and packages','virtual environments','GIL and threading','multiprocessing','async/await','regular expressions','unit testing (pytest)','PEP8 and code style','memory management','Python 2 vs 3 differences'],
+  'Java Developer':['JVM, JRE, JDK','OOP pillars','interfaces vs abstract classes','collections framework','generics','exception handling','multithreading','synchronization','garbage collection','String pool and immutability','equals() and hashCode()','Streams API','lambda expressions','annotations','Spring Boot basics','dependency injection','REST API design','JDBC and connection pooling','design patterns','serialization','static vs instance members','final keyword','exception hierarchy','memory model','build tools (Maven/Gradle)'],
+  'JavaScript / Frontend':['var/let/const','hoisting','closures','event loop','promises vs async/await','this keyword','prototypal inheritance','DOM manipulation','event delegation','arrow functions','destructuring','spread/rest operators','modules (import/export)','fetch API','local storage vs session storage','React component lifecycle','React hooks','virtual DOM','CSS flexbox/grid','responsive design','debounce vs throttle','equality operators (== vs ===)','memory leaks in JS','web accessibility (a11y)','browser rendering pipeline'],
+  'Full Stack Developer':['frontend-backend architecture','REST vs GraphQL','authentication (JWT/OAuth)','session management','database design','API rate limiting','caching strategies','microservices vs monolith','CI/CD pipeline','containerization basics','state management (Redux/Context)','server-side rendering','WebSockets','MVC architecture','ORMs','testing strategies (unit/integration)','environment variables and config','deployment workflows','load balancing','version control with Git','MERN/MEAN stack tradeoffs','error handling across layers','security basics (XSS/CSRF)','performance optimization','scalability planning'],
+  'Data Science / ML':['supervised vs unsupervised learning','overfitting and underfitting','bias-variance tradeoff','feature engineering','data cleaning and preprocessing','train/test/validation split','cross-validation','linear vs logistic regression','decision trees and random forests','gradient boosting (XGBoost)','neural networks basics','CNNs and RNNs','evaluation metrics (precision/recall/F1)','confusion matrix','regularization (L1/L2)','dimensionality reduction (PCA)','clustering (k-means)','handling imbalanced data','hyperparameter tuning','model deployment','A/B testing','exploratory data analysis','pandas/numpy operations','data visualization','NLP basics'],
+  'Data Structures & Algorithms':['arrays and strings','linked lists','stacks and queues','trees and binary search trees','heaps and priority queues','hash tables','graphs (BFS/DFS)','sorting algorithms','searching algorithms','recursion','dynamic programming','greedy algorithms','time and space complexity','two-pointer technique','sliding window','divide and conquer','trie data structure','union-find / disjoint sets','backtracking','bit manipulation','graph shortest paths (Dijkstra)','topological sort','balanced trees (AVL/Red-Black)','sliding window maximum','LRU cache design'],
+  'Database (SQL/DBMS)':['joins (inner/outer/cross)','primary vs foreign keys','normalization forms','indexes and performance','transactions and ACID','aggregate functions and GROUP BY','subqueries vs joins','views','stored procedures','triggers','window functions','locking and concurrency','query optimization','NoSQL vs SQL','database sharding and replication','data integrity constraints','ER diagrams','schema design','backup and recovery','SQL injection prevention','CTEs (common table expressions)','database normalization vs denormalization','connection pooling','partitioning strategies','OLTP vs OLAP'],
+  'Operating Systems':['process vs thread','process scheduling algorithms','deadlock conditions and prevention','memory management and paging','virtual memory','context switching','semaphores and mutexes','inter-process communication','file systems','system calls','CPU scheduling (FCFS/SJF/Round Robin)','race conditions','starvation and aging','cache memory and locality','swapping','kernel vs user mode','multithreading models','disk scheduling algorithms','process states','orphan and zombie processes'],
+  'Computer Networks':['OSI model layers','TCP vs UDP','three-way handshake','DNS resolution process','HTTP vs HTTPS','load balancing strategies','subnetting and CIDR','routing protocols','firewalls and NAT','DHCP','REST API networking basics','TLS/SSL handshake','congestion control','sockets programming','CDN and caching','VPN basics','network latency and bandwidth','IPv4 vs IPv6','ARP and MAC addressing','proxy servers'],
+  'DevOps / Cloud':['CI/CD pipelines','Docker fundamentals','Kubernetes architecture','infrastructure as code (Terraform)','AWS core services (EC2/S3/IAM)','monitoring and logging (Prometheus/ELK)','blue-green and canary deployments','auto-scaling','load balancers','configuration management (Ansible)','version control workflows (GitOps)','container orchestration','serverless computing','cloud cost optimization','disaster recovery planning','secrets management','networking in cloud (VPC)','high availability design','immutable infrastructure','site reliability engineering basics'],
+  'Cybersecurity':['CIA triad','common attack types (XSS/SQLi/CSRF)','encryption (symmetric vs asymmetric)','hashing vs encryption','authentication vs authorization','firewalls and IDS/IPS','penetration testing phases','OWASP Top 10','social engineering attacks','malware types','network security basics','zero trust architecture','VPN and secure tunneling','security incident response','vulnerability assessment','multi-factor authentication','secure coding practices','DDoS attacks and mitigation','digital forensics basics','compliance standards (ISO/GDPR)'],
+  'Mobile Dev (Android/iOS)':['activity/fragment lifecycle','view controllers and lifecycle (iOS)','state management in mobile apps','REST API integration','local storage (SQLite/CoreData)','push notifications','app performance optimization','memory management on mobile','UI/UX guidelines (Material/Human Interface)','threading and background tasks','dependency injection in mobile','app security best practices','offline-first design','cross-platform frameworks (Flutter/RN)','app store deployment process','responsive layouts for mobile','testing mobile apps','battery and resource optimization','permissions handling','deep linking'],
+  'C / C++':['pointers and memory addresses','dynamic memory allocation','structures vs classes','virtual functions and polymorphism','constructors and destructors','operator overloading','templates','smart pointers','memory leaks and how to avoid them','header files and compilation process','const correctness','references vs pointers','the stack vs the heap','exception handling in C++','STL containers','multithreading in C++','undefined behavior examples','preprocessor directives','bitwise operations','RAII principle'],
+  'System Design':['scalability fundamentals','load balancing strategies','caching layers (Redis/CDN)','database sharding','CAP theorem','microservices communication','message queues (Kafka/RabbitMQ)','rate limiting design','designing a URL shortener','designing a chat application','consistent hashing','API gateway design','data partitioning strategies','eventual vs strong consistency','designing a notification system','horizontal vs vertical scaling','content delivery networks','designing a news feed system','fault tolerance and redundancy','designing a rate limiter'],
+  'AI / Prompt Engineering':['what is a large language model','prompt design fundamentals','few-shot vs zero-shot prompting','chain-of-thought prompting','temperature and sampling parameters','embeddings and vector search','retrieval-augmented generation (RAG)','fine-tuning vs prompting','hallucinations and mitigation','tokenization basics','context window limitations','evaluating LLM outputs','responsible AI / bias considerations','building a chatbot pipeline','prompt injection risks','system vs user prompts','multi-turn conversation design','using AI APIs in applications','cost and latency tradeoffs','AI agent and tool-use concepts'],
+  'HR / Behavioral':['tell me about yourself','greatest strengths and weaknesses','handling conflict at work','time management and prioritization','working in a team','leadership experience','handling failure or mistakes','why do you want this job','career goals in 5 years','handling tight deadlines','giving and receiving feedback','adapting to change','salary expectations','reason for leaving previous job','handling a difficult coworker','describe a challenging project','motivation and what drives you','work-life balance approach','handling ambiguity','question for the interviewer'],
+  'Marketing Manager':['marketing funnel stages','SEO fundamentals','content marketing strategy','social media campaign planning','brand positioning','market segmentation','customer persona development','email marketing best practices','marketing analytics and KPIs','A/B testing campaigns','paid advertising (PPC/SEM)','influencer marketing','product launch strategy','competitor analysis','marketing budget allocation','customer retention strategies','growth hacking tactics','PR and brand reputation','marketing automation tools','measuring ROI of campaigns'],
+  'Sales Executive':['sales pipeline stages','handling objections','cold calling techniques','building client relationships','closing techniques','CRM tools usage','upselling and cross-selling','sales target achievement','negotiation strategies','lead qualification (BANT)','sales forecasting','account management','handling rejection','consultative selling approach','B2B vs B2C sales differences','sales pitch structuring','follow-up strategies','competitive selling','customer retention in sales','sales team collaboration'],
+  'Finance Analyst':['financial statement analysis','ratio analysis','budgeting and forecasting','variance analysis','cash flow management','valuation methods (DCF)','financial modeling basics','cost accounting fundamentals','capital budgeting','risk assessment in finance','Excel for financial analysis','working capital management','financial reporting standards','investment analysis basics','break-even analysis','profitability analysis','interpreting balance sheets','interpreting income statements','interpreting cash flow statements','financial KPIs'],
+  'Business Analyst':['requirements gathering techniques','stakeholder management','use case documentation','process mapping','gap analysis','SWOT analysis','agile vs waterfall BA role','user stories and acceptance criteria','data-driven decision making','business process reengineering','prioritization techniques (MoSCoW)','wireframing basics','BRD vs FRD documents','root cause analysis','change management','KPI definition','interviewing stakeholders','documenting business rules','UAT coordination','presenting findings to leadership'],
+  'Content Writer':['SEO writing basics','content planning and calendars','tone and brand voice','editing and proofreading process','writing for different platforms','headline writing techniques','storytelling in content','keyword research basics','content performance metrics','writing CTAs (calls to action)','long-form vs short-form content','plagiarism and originality','content repurposing','writing for B2B vs B2C','collaborating with design teams','content style guides','writing under deadlines','researching unfamiliar topics','email/newsletter writing','adapting content for SEO and readability'],
+  'Operations Manager':['process improvement methodologies','supply chain coordination','resource allocation','KPI tracking for operations','vendor management','quality control processes','workflow optimization','team scheduling and capacity planning','risk management in operations','cost reduction strategies','inventory management basics','SOPs (standard operating procedures)','cross-department coordination','handling operational bottlenecks','data-driven operational decisions','lean/six sigma basics','crisis management','compliance and safety standards','technology adoption in operations','performance reporting'],
+  'Product Manager':['product roadmap planning','prioritization frameworks (RICE/MoSCoW)','writing PRDs','stakeholder alignment','user research methods','A/B testing for products','go-to-market strategy','agile/scrum ceremonies','defining success metrics (OKRs)','competitive analysis','handling feature trade-offs','working with engineering teams','customer feedback loops','MVP definition','product lifecycle management','pricing strategy basics','cross-functional leadership','data-informed decision making','handling scope creep','product launch coordination'],
+  'Customer Support':['handling angry customers','active listening techniques','ticket prioritization','SLA management','de-escalation strategies','multichannel support handling','knowledge base usage','measuring customer satisfaction (CSAT/NPS)','handling repeat issues','empathy in customer communication','upselling during support interactions','escalation processes','remote/chat support best practices','handling product limitations gracefully','documenting customer interactions','team collaboration in support','reducing response/resolution time','handling difficult feedback','onboarding new customers','cross-training on products'],
+  'Logistics / Supply Chain':['supply chain network design','inventory management techniques','demand forecasting','warehouse management','vendor and supplier relations','transportation and route optimization','just-in-time (JIT) inventory','supply chain risk management','procurement processes','order fulfillment workflows','cold chain logistics basics','reverse logistics','supply chain technology (ERP/WMS)','cost optimization in logistics','last-mile delivery challenges','customs and trade compliance','sustainability in supply chain','supplier performance evaluation','disruption and contingency planning','KPI tracking for logistics']
+};
+const QGEN_TEMPLATES=[
+  q=>`What is ${q}? Explain it as you would in a real interview.`,
+  q=>`Why does ${q} matter in day-to-day work? Give a concrete example.`,
+  q=>`What are the advantages and limitations of ${q}?`,
+  q=>`Describe a real or hypothetical situation where you applied ${q}.`,
+  q=>`What common mistakes do people make around ${q}, and how do you avoid them?`,
+  q=>`How would you explain ${q} to someone with no background in it?`,
+  q=>`What best practices do you follow when dealing with ${q}?`,
+  q=>`How do you troubleshoot or improve something related to ${q}?`,
+  q=>`How has your understanding of ${q} evolved with experience?`,
+  q=>`What tools, frameworks, or methods do you associate with ${q}?`,
+  q=>`Compare ${q} with a closely related concept you know.`,
+  q=>`Walk me through how you would assess your own skill level in ${q}.`,
+  q=>`What's a tricky edge case or pitfall related to ${q}?`,
+  q=>`How would you mentor a junior colleague on ${q}?`
+];
+function genTopicPool(role){
+  const topics=TOPICS[role];
+  if(!topics) return [];
+  const out=[];
+  topics.forEach((topic,ti)=>{
+    QGEN_TEMPLATES.forEach((tpl,tj)=>{
+      const idx=ti*QGEN_TEMPLATES.length+tj;
+      const level=idx%3===0?'basic':idx%3===1?'intermediate':'advanced';
+      out.push({
+        q:tpl(topic),
+        code:null,
+        ans:`A strong answer defines "${topic}" clearly, gives one concrete example from your own experience, and connects it back to value for the role/team. Avoid vague generalities — be specific.`,
+        exp:`This question probes both conceptual understanding and applied experience with "${topic}". Structure your answer: definition → example → impact/result.`,
+        output:null,
+        level
+      });
+    });
+  });
+  return out.slice(0,200);
+}
+const GENERATED_POOL_CACHE={};
+function getDomainPool(role){
+  if(!GENERATED_POOL_CACHE[role]) GENERATED_POOL_CACHE[role]=genTopicPool(role);
+  return GENERATED_POOL_CACHE[role];
+}
+
+// ═══════════════════════════════════════════════════
+//  QUESTION BANK
+// ═══════════════════════════════════════════════════
+const QB = {
+  'Python Developer': {
+    basic:[
+      {q:"What is the difference between a list and a tuple in Python?",code:null,
+       ans:"A list is mutable (changeable) and uses [ ]. A tuple is immutable (fixed) and uses ( ). Tuples are faster for read-only data.",
+       exp:"Use lists for dynamic data that changes. Use tuples for fixed data like coordinates. Tuples have a smaller memory footprint and are hashable, so they can be dict keys.",output:null},
+      {q:"What will be the output of this Python code?",
+       code:`<span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="kw">return</span> <span class="str">f"Hello, {name}! 👋"</span>
+
+print(greet(<span class="str">"Divakar"</span>))`,
+       ans:"Hello, Divakar! 👋",
+       exp:"f-strings (formatted string literals) allow embedding expressions inside { } directly. Introduced in Python 3.6, they are faster than .format() and % formatting.",
+       output:"Hello, Divakar! 👋"},
+      {q:"What is a lambda function in Python? Show an example.",
+       code:`<span class="var">square</span> = <span class="kw">lambda</span> x: x ** <span class="num">2</span>
+<span class="var">cube</span>   = <span class="kw">lambda</span> x: x ** <span class="num">3</span>
+print(square(<span class="num">5</span>), cube(<span class="num">3</span>))`,
+       ans:"25 27",
+       exp:"A lambda is an anonymous single-line function. It can have many parameters but only one expression. They're ideal with map(), filter(), and sorted().",
+       output:"25 27"},
+      {q:"What is the output of this filter + lambda?",
+       code:`nums = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>]
+evens = list(filter(<span class="kw">lambda</span> x: x%<span class="num">2</span>==<span class="num">0</span>, nums))
+print(evens)`,
+       ans:"[2, 4, 6]",
+       exp:"filter() applies the condition to each element and keeps those that return True. The lambda checks even numbers. Only 2, 4, 6 pass.",
+       output:"[2, 4, 6]"},
+      {q:"Explain Python's 'pass', 'break', and 'continue' statements.",
+       code:`<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">5</span>):
+    <span class="kw">if</span> i == <span class="num">2</span>: <span class="kw">continue</span>   <span class="cm"># skip 2</span>
+    <span class="kw">if</span> i == <span class="num">4</span>: <span class="kw">break</span>     <span class="cm"># stop at 4</span>
+    print(i)`,
+       ans:"0\n1\n3",
+       exp:"'continue' skips the rest of the current iteration. 'break' exits the loop entirely. 'pass' is a no-op placeholder. Output skips 2 (continue) and stops before 4 (break).",
+       output:"0\n1\n3"}
+    ],
+    intermediate:[
+      {q:"Explain Python decorators with a real-world timing example.",
+       code:`<span class="kw">import</span> time
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args,**kwargs):
+        start=time.time()
+        result=func(*args,**kwargs)
+        print(<span class="str">f"Took {time.time()-start:.4f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+@timer
+<span class="kw">def</span> <span class="fn">process</span>(n):
+    <span class="kw">return</span> sum(range(n))
+print(process(<span class="num">1000000</span>))`,
+       ans:"499999500000\nTook 0.0312s",
+       exp:"A decorator wraps a function to add behavior. @timer is shorthand for process = timer(process). The wrapper records time before/after the call. *args/**kwargs pass all arguments through.",
+       output:"499999500000\nTook ~0.03s"},
+      {q:"What is a generator? What is the output here?",
+       code:`<span class="kw">def</span> <span class="fn">fibonacci</span>(n):
+    a,b=<span class="num">0</span>,<span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> range(n):
+        <span class="kw">yield</span> a
+        a,b=b,a+b
+print(list(fibonacci(<span class="num">7</span>)))`,
+       ans:"[0, 1, 1, 2, 3, 5, 8]",
+       exp:"Generators use 'yield' to produce values one at a time — memory-efficient for large sequences. They don't compute all values upfront. list() forces eager evaluation of all 7 values.",
+       output:"[0, 1, 1, 2, 3, 5, 8]"},
+      {q:"What does this list comprehension output and why?",
+       code:`matrix=[[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>],[<span class="num">5</span>,<span class="num">6</span>]]
+flat=[x*<span class="num">2</span> <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row <span class="kw">if</span> x%<span class="num">2</span>!=<span class="num">0</span>]
+print(flat)`,
+       ans:"[2, 6, 10]",
+       exp:"Nested list comprehension: outer loop over rows, inner over elements. The condition keeps only odd numbers (1,3,5), then multiplies by 2. Result: [2,6,10].",
+       output:"[2, 6, 10]"}
+    ],
+    advanced:[
+      {q:"Explain Python metaclasses. What is the output of this Singleton?",
+       code:`<span class="kw">class</span> <span class="fn">Meta</span>(type):
+    _i={}
+    <span class="kw">def</span> <span class="fn">__call__</span>(cls,*a,**k):
+        <span class="kw">if</span> cls <span class="kw">not in</span> cls._i:
+            cls._i[cls]=super().__call__(*a,**k)
+        <span class="kw">return</span> cls._i[cls]
+<span class="kw">class</span> <span class="fn">DB</span>(metaclass=Meta): <span class="kw">pass</span>
+db1=DB(); db2=DB()
+print(db1 <span class="kw">is</span> db2)`,
+       ans:"True",
+       exp:"Metaclass is the 'class of a class' — controls how classes are created. Meta.__call__ intercepts instantiation and returns the same instance every time. This is the Singleton pattern.",
+       output:"True"},
+      {q:"What does this GIL + threading code demonstrate?",
+       code:`<span class="kw">import</span> threading
+counter=<span class="num">0</span>
+<span class="kw">def</span> <span class="fn">inc</span>():
+    <span class="kw">global</span> counter
+    <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">100000</span>): counter+=<span class="num">1</span>
+t=[threading.Thread(target=inc) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">2</span>)]
+[x.start() <span class="kw">for</span> x <span class="kw">in</span> t]; [x.join() <span class="kw">for</span> x <span class="kw">in</span> t]
+print(counter)`,
+       ans:"Non-deterministic — less than 200000 due to race condition",
+       exp:"Python's GIL doesn't prevent race conditions because counter+=1 is 3 operations (read,increment,write). Use threading.Lock() or atomic operations. For CPU-bound parallelism use multiprocessing.",
+       output:"~185432 (varies)"}
+    ]
+  },
+  'Java Developer':{
+    basic:[
+      {q:"What is the difference between '==' and '.equals()' in Java?",
+       code:`String a=<span class="str">"hello"</span>, b=<span class="str">"hello"</span>;
+String c=<span class="kw">new</span> String(<span class="str">"hello"</span>);
+System.out.println(a==b);      <span class="cm">// ?</span>
+System.out.println(a==c);      <span class="cm">// ?</span>
+System.out.println(a.equals(c)); <span class="cm">// ?</span>`,
+       ans:"true\nfalse\ntrue",
+       exp:"'==' compares references. String literals share the pool so a==b is true. 'new String()' creates a new heap object so a==c is false. '.equals()' compares content.",
+       output:"true\nfalse\ntrue"},
+      {q:"What is method overloading vs overriding in Java?",code:null,
+       ans:"Overloading: same method name, different parameters — resolved at compile time (static polymorphism). Overriding: subclass redefines a superclass method — resolved at runtime (dynamic polymorphism).",
+       exp:"@Override annotation helps catch overriding mistakes. Overloading can differ by parameter type, count, or order. Return type alone cannot distinguish overloaded methods.",output:null}
+    ],
+    intermediate:[
+      {q:"What is the output? Explain post vs pre increment.",
+       code:`<span class="kw">int</span> x=<span class="num">5</span>;
+System.out.println(x++); <span class="cm">// post</span>
+System.out.println(++x); <span class="cm">// pre</span>
+System.out.println(x);`,
+       ans:"5\n7\n7",
+       exp:"x++ prints current value (5) then increments to 6. ++x increments first (6→7) then prints 7. Final x is 7.",
+       output:"5\n7\n7"},
+      {q:"Explain Java's HashMap vs TreeMap vs LinkedHashMap.",code:null,
+       ans:"HashMap: O(1) avg, unordered, allows 1 null key. TreeMap: O(log n), sorted by key, no null keys. LinkedHashMap: O(1), insertion order preserved.",
+       exp:"Choose HashMap for speed, TreeMap for sorted iteration, LinkedHashMap for ordered traversal. All implement Map interface. Java 8+ HashMap converts bucket list to tree at threshold 8.",output:null}
+    ],
+    advanced:[
+      {q:"Explain Java memory model: Stack, Heap, Metaspace and GC.",code:null,
+       ans:"Stack: thread-local, holds primitives + references (LIFO). Heap: shared, holds objects. Metaspace: class metadata (replaces PermGen in Java 8+). GC reclaims unreachable heap objects.",
+       exp:"G1GC is default in Java 9+. ZGC/Shenandoah target sub-millisecond pauses. Understanding GC helps tune -Xms, -Xmx, -XX:+UseG1GC flags for performance.",output:null}
+    ]
+  },
+  'JavaScript / Frontend':{
+    basic:[
+      {q:"What is the difference between var, let, and const?",
+       code:`<span class="kw">var</span> x=<span class="num">1</span>;   <span class="cm">// function scope, hoisted</span>
+<span class="kw">let</span> y=<span class="num">2</span>;   <span class="cm">// block scope</span>
+<span class="kw">const</span> z=<span class="num">3</span>; <span class="cm">// block scope, no reassign</span>
+{<span class="kw">let</span> a=<span class="num">10</span>;}
+console.log(<span class="kw">typeof</span> a); <span class="cm">// ?</span>`,
+       ans:"undefined",
+       exp:"'let' and 'const' are block-scoped; 'a' doesn't exist outside { }. 'var' is function-scoped and hoisted. Prefer const by default, let when reassignment is needed, avoid var.",
+       output:"undefined"},
+      {q:"What is the output of this closure?",
+       code:`<span class="kw">function</span> <span class="fn">counter</span>() {
+  <span class="kw">let</span> n=<span class="num">0</span>;
+  <span class="kw">return</span> ()=>++n;
+}
+<span class="kw">const</span> c=counter();
+console.log(c(),c(),c());`,
+       ans:"1 2 3",
+       exp:"A closure remembers its outer scope after the outer function returns. 'n' persists between calls because the arrow function holds a reference to counter's lexical scope.",
+       output:"1 2 3"}
+    ],
+    intermediate:[
+      {q:"Explain the Event Loop. What is the output order?",
+       code:`console.log(<span class="str">'A'</span>);
+setTimeout(()=>console.log(<span class="str">'B'</span>),<span class="num">0</span>);
+Promise.resolve().then(()=>console.log(<span class="str">'C'</span>));
+console.log(<span class="str">'D'</span>);`,
+       ans:"A\nD\nC\nB",
+       exp:"Synchronous code runs first (A, D). Microtasks (Promises) run before macrotasks (setTimeout). Even with 0ms, setTimeout goes to macrotask queue — runs after all microtasks.",
+       output:"A\nD\nC\nB"}
+    ],
+    advanced:[
+      {q:"What is Virtual DOM and how does React's reconciliation work?",code:null,
+       ans:"Virtual DOM is an in-memory representation of the real DOM. React diffs the old and new VDOM trees (reconciliation) and applies only the minimum changes to the real DOM (patching).",
+       exp:"React 18 uses concurrent rendering with Fiber architecture. Keys in lists help reconciliation identify moved elements. shouldComponentUpdate / React.memo prevent unnecessary re-renders.",output:null}
+    ]
+  },
+  'Data Structures & Algorithms':{
+    basic:[
+      {q:"What is the time complexity of binary search and why?",
+       code:`<span class="kw">def</span> <span class="fn">binary_search</span>(arr,target):
+    l,r=<span class="num">0</span>,len(arr)-<span class="num">1</span>
+    <span class="kw">while</span> l<=r:
+        m=(l+r)//<span class="num">2</span>
+        <span class="kw">if</span> arr[m]==target: <span class="kw">return</span> m
+        <span class="kw">elif</span> arr[m]<target: l=m+<span class="num">1</span>
+        <span class="kw">else</span>: r=m-<span class="num">1</span>
+    <span class="kw">return</span> -<span class="num">1</span>
+print(binary_search([<span class="num">1</span>,<span class="num">3</span>,<span class="num">5</span>,<span class="num">7</span>,<span class="num">9</span>],<span class="num">7</span>))`,
+       ans:"3",
+       exp:"Binary search is O(log n) — each step halves the search space. 1M elements: max 20 comparisons. Array must be sorted. Linear search is O(n).",
+       output:"3"}
+    ],
+    intermediate:[
+      {q:"Implement merge sort. What is the output?",
+       code:`<span class="kw">def</span> <span class="fn">merge_sort</span>(a):
+    <span class="kw">if</span> len(a)<=<span class="num">1</span>: <span class="kw">return</span> a
+    m=len(a)//<span class="num">2</span>
+    L,R=merge_sort(a[:m]),merge_sort(a[m:])
+    res,i,j=[],<span class="num">0</span>,<span class="num">0</span>
+    <span class="kw">while</span> i<len(L) <span class="kw">and</span> j<len(R):
+        <span class="kw">if</span> L[i]<=R[j]: res.append(L[i]); i+=<span class="num">1</span>
+        <span class="kw">else</span>: res.append(R[j]); j+=<span class="num">1</span>
+    <span class="kw">return</span> res+L[i:]+R[j:]
+print(merge_sort([<span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">9</span>,<span class="num">3</span>]))`,
+       ans:"[1, 2, 3, 5, 8, 9]",
+       exp:"Merge sort is O(n log n) time, O(n) space. It's stable and predictable. log n recursion levels, each merging takes O(n). Preferred over quicksort when stability matters.",
+       output:"[1, 2, 3, 5, 8, 9]"}
+    ],
+    advanced:[
+      {q:"Explain Dijkstra's algorithm and its time complexity.",code:null,
+       ans:"Dijkstra finds shortest paths from a source in a weighted graph. Uses a min-heap (priority queue). Time: O((V+E) log V). Only works with non-negative weights.",
+       exp:"For negative weights use Bellman-Ford O(VE). For all-pairs shortest paths use Floyd-Warshall O(V³). Dijkstra with Fibonacci heap achieves O(E + V log V) — used in GPS routing.",output:null}
+    ]
+  },
+  'Database (SQL/DBMS)':{
+    basic:[
+      {q:"What is the difference between PRIMARY KEY and UNIQUE KEY?",
+       code:`CREATE TABLE students (
+  id INT PRIMARY KEY,
+  email VARCHAR(100) UNIQUE,
+  name VARCHAR(50) NOT NULL
+);`,
+       ans:"PRIMARY KEY: unique + NOT NULL, one per table. UNIQUE KEY: unique but can have one NULL, multiple per table.",
+       exp:"Primary key physically clusters data in most DBs (clustered index). Unique keys create non-clustered indexes. Foreign keys reference primary keys to maintain referential integrity.",
+       output:null}
+    ],
+    intermediate:[
+      {q:"What is the result of this LEFT JOIN query?",
+       code:`<span class="cm">-- Students: (1,'Alice'),(2,'Bob'),(3,'Charlie')</span>
+<span class="cm">-- Scores:   (1,95),(2,80)  -- Charlie has no score</span>
+SELECT s.name, sc.score
+FROM students s
+LEFT JOIN scores sc ON s.id=sc.student_id;`,
+       ans:"Alice | 95\nBob   | 80\nCharlie | NULL",
+       exp:"LEFT JOIN returns ALL rows from the left table and matching rows from right. Charlie has no score, so NULL appears. INNER JOIN would exclude Charlie. RIGHT JOIN would keep all scores.",
+       output:"Alice   | 95\nBob     | 80\nCharlie | NULL"}
+    ],
+    advanced:[
+      {q:"Explain database indexing — when it helps and when it hurts.",code:null,
+       ans:"Indexes speed up SELECT/WHERE via B-tree lookup (O(log n) vs O(n)). But slow down INSERT/UPDATE/DELETE because the index must be updated too.",
+       exp:"Use indexes on WHERE, JOIN ON, ORDER BY columns. Avoid on low-cardinality columns. Composite indexes follow the leftmost prefix rule. Use EXPLAIN/ANALYZE to see if queries use indexes.",output:null}
+    ]
+  },
+  'HR / Behavioral':{
+    basic:[
+      {q:"Tell me about yourself in 2–3 minutes.",code:null,
+       ans:"Use this structure: Introduction → Education → Key Skills → Projects/Experience → Why this role. Stay relevant, confident, and connect your background to the role.",
+       exp:"This is the most common opening question. Prepare a 90-second answer. Highlight achievements with numbers. End by tying your skills to what the company needs. Don't just recite your resume.",output:null},
+      {q:"What are your greatest strengths and one weakness?",code:null,
+       ans:"Strengths: be specific with examples (e.g., 'problem-solving — I debugged a critical bug that saved our product demo'). Weakness: pick a real one you're actively improving, not 'I work too hard'.",
+       exp:"Interviewers want self-awareness and honesty. Turn the weakness into a growth story. Example: 'I used to struggle with public speaking, so I joined a college tech talk club and now present monthly.'",output:null}
+    ],
+    intermediate:[
+      {q:"Describe a conflict with a team member and how you resolved it.",code:null,
+       ans:"Use STAR method: Situation → Task → Action → Result. Focus on communication, empathy, and resolution. Highlight the positive outcome.",
+       exp:"This tests emotional intelligence. Avoid blaming others. Show you took initiative. Example: 'We disagreed on the tech stack. I organized a team meeting, presented data, and we reached a consensus that worked for everyone.'",output:null}
+    ],
+    advanced:[
+      {q:"A critical production bug appears 30 minutes before a client demo. What do you do?",code:null,
+       ans:"Assess severity immediately → inform stakeholders → attempt quick fix vs rollback decision → communicate status transparently → document and post-mortem after demo.",
+       exp:"This tests crisis management and decision-making under pressure. Good engineers prioritize communication and business impact, not just fixing the bug. A rollback is often safer than a rushed fix.",output:null}
+    ]
+  },
+  'Full Stack Developer':{
+    basic:[
+      {q:"What is the difference between REST and GraphQL?",code:null,
+       ans:"REST: multiple endpoints, fixed response shape, over-fetching common. GraphQL: single endpoint, client specifies exact fields needed, solves over/under-fetching.",
+       exp:"REST is simpler and widely cached. GraphQL is ideal for complex, nested data (social feeds, dashboards). GraphQL has a learning curve and caching is trickier (use persisted queries).",output:null}
+    ],
+    intermediate:[
+      {q:"Explain JWT authentication flow.",code:null,
+       ans:"1) User logs in → server validates credentials → signs a JWT (header.payload.signature) → sends to client. 2) Client stores JWT → sends in Authorization: Bearer header with each request. 3) Server validates signature → grants access.",
+       exp:"JWTs are stateless — server doesn't need to store sessions. Store in httpOnly cookies (not localStorage) to prevent XSS. Use short expiry + refresh tokens. Never store sensitive data in payload — it's base64 encoded, not encrypted.",output:null}
+    ],
+    advanced:[
+      {q:"Explain microservices vs monolith. When would you choose each?",code:null,
+       ans:"Monolith: single deployable unit — simpler to develop and test, harder to scale parts independently. Microservices: independent services — scale each independently, technology flexibility, but complex DevOps overhead.",
+       exp:"Start with a monolith (Martin Fowler's advice). Move to microservices when teams become large, scaling needs differ per service, or deployment cycles conflict. Microservices need service discovery, API gateway, distributed tracing.",output:null}
+    ]
+  }
+};
+
+// Fill remaining roles with generic HR questions
+const genericHR = QB['HR / Behavioral'];
+['Marketing Manager','Sales Executive','Finance Analyst','Business Analyst','Content Writer',
+ 'Operations Manager','Product Manager','Customer Support','Logistics / Supply Chain'].forEach(r=>{
+  if(!QB[r]) QB[r]=genericHR;
+});
+['DevOps / Cloud','Cybersecurity','Mobile Dev (Android/iOS)','System Design','AI / Prompt Engineering',
+ 'Data Science / ML','C / C++','Computer Networks','Operating Systems'].forEach(r=>{
+  if(!QB[r]) QB[r]= QB['Data Structures & Algorithms'];
+});
+
+// ═══════════════════════════════════════════════════
+//  APP STATE
+// ═══════════════════════════════════════════════════
+let currentUser=null;
+let session={role:'',type:'technical',diff:'basic',qn:10,questions:[],idx:0,history:[],active:false};
+let timerInterval=null;
+let timeLeft=60;
+const TIMER_TOTAL=60;
+let answerMode='type';
+let recognition=null;
+let isListening=false;
+let mediaRecorder=null;
+let recordedChunks=[];
+let screenStream=null,camStream=null,canvasStream=null,canvasRAF=null;
+let timerWasPausedByTab=false;
+let pausedTimeLeft=null;
+
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+function getUsers(){return JSON.parse(localStorage.getItem('ltech_users')||'{}');}
+function saveUsers(u){localStorage.setItem('ltech_users',JSON.stringify(u));}
+function genID(name){return name.toUpperCase().replace(/\s/g,'').slice(0,4)+'-'+Math.floor(1000+Math.random()*9000);}
+
+function doRegister(){
+  const fn=v('r-fname'),ln=v('r-lname'),em=v('r-email'),ph=v('r-phone'),
+        co=v('r-college'),dg=v('r-degree'),yr=v('r-year'),pw=v('r-pass');
+  hideErr('reg-err');
+  if(!fn||!ln||!em||!ph||!co||!dg||!yr||!pw){showErr('reg-err','Please fill all fields.');return;}
+  if(pw.length<6){showErr('reg-err','Password must be at least 6 characters.');return;}
+  if(!/^\d{10}$/.test(ph)){showErr('reg-err','Phone must be exactly 10 digits.');return;}
+  const users=getUsers();
+  if(Object.values(users).find(u=>u.email===em)){showErr('reg-err','Email already registered.');return;}
+  const id=genID(fn);
+  users[id]={id,fname:fn,lname:ln,email:em,phone:ph,college:co,degree:dg,year:yr,
+              password:pw,joined:new Date().toLocaleDateString(),history:[]};
+  saveUsers(users);
+  const msg=document.getElementById('reg-msg');
+  msg.style.display='block';
+  msg.innerHTML=`🎉 Account created! Your Login ID: <strong>${id}</strong> — save this!<br><small>Redirecting in 3s…</small>`;
+  setTimeout(()=>{showScreen('login');},3000);
+}
+
+function doLogin(){
+  const id=v('l-id'),pw=v('l-pass');
+  hideErr('login-err');
+  if(!id||!pw){showErr('login-err','Enter your Login ID and password.');return;}
+  const users=getUsers();
+  const user=users[id];
+  if(!user){showErr('login-err','Login ID not found.');return;}
+  if(user.password!==pw){showErr('login-err','Wrong password.');return;}
+  currentUser=user;
+  loadDashboard();
+}
+
+function doLogout(){currentUser=null;showScreen('register');}
+
+// ═══════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════
+function loadDashboard(){
+  const u=currentUser;
+  document.getElementById('nav-avatar').textContent=(u.fname[0]+u.lname[0]).toUpperCase();
+  document.getElementById('nav-name').textContent=u.fname;
+  document.getElementById('prof-avatar').textContent=(u.fname[0]+u.lname[0]).toUpperCase();
+  document.getElementById('prof-name').textContent=u.fname+' '+u.lname;
+  document.getElementById('prof-college').textContent=u.college;
+  document.getElementById('prof-id').textContent=u.id;
+  document.getElementById('prof-email').textContent=u.email;
+  document.getElementById('prof-phone').textContent=u.phone;
+  document.getElementById('prof-degree').textContent=u.degree;
+  document.getElementById('prof-year').textContent=u.year;
+  document.getElementById('prof-joined').textContent=u.joined;
+  showScreen('dashboard');
+  refreshStats();
+  renderHistory();
+  populateRoles('it');
+}
+
+function refreshStats(){
+  const h=currentUser.history||[];
+  const total=h.length;
+  const scores=h.map(s=>s.score).filter(Boolean);
+  const best=scores.length?Math.max(...scores).toFixed(1):'—';
+  const avg=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):'—';
+  const week=h.filter(s=>{
+    const d=new Date(s.date);const now=new Date();
+    return (now-d)<7*24*3600*1000;
+  }).length;
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-best').textContent=best;
+  document.getElementById('stat-avg').textContent=avg;
+  document.getElementById('stat-week').textContent=week;
+}
+
+function renderHistory(){
+  const h=[...(currentUser.history||[])].reverse();
+  renderHistoryList('recent-list',h.slice(0,5));
+  renderHistoryList('full-history-list',h);
+}
+
+function renderHistoryList(elId,items){
+  const el=document.getElementById(elId);
+  if(!items.length){
+    el.innerHTML=`<div class="empty-state"><div class="icon">📋</div><p>No sessions yet. Start your first interview!</p></div>`;return;
+  }
+  el.innerHTML=items.map((s,i)=>{
+    const sc=s.score||0;
+    const col=sc>=8?'var(--green)':sc>=6?'var(--yellow)':'var(--red)';
+    const bg=sc>=8?'rgba(16,185,129,.1)':sc>=6?'rgba(245,158,11,.1)':'rgba(239,68,68,.1)';
+    const lvlCol=s.diff==='basic'?'var(--green)':s.diff==='intermediate'?'var(--yellow)':'var(--red)';
+    return `<div class="hist-item">
+      <div class="hist-score" style="background:${bg};color:${col};">${sc.toFixed(1)}<span style="font-size:9px;font-weight:400;">/10</span></div>
+      <div class="hist-info"><h4>${s.role}</h4><p>${s.type} · ${s.date} · ${s.questions} Qs</p></div>
+      <div class="hist-badge" style="background:${bg};color:${lvlCol};border:1px solid ${lvlCol}33;">${s.diff}</div>
+    </div>`;
+  }).join('');
+}
+
+function switchTab(tab){
+  ['overview','history','profile'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('hidden',t!==tab);
+  });
+  document.querySelectorAll('.nav-tab').forEach((b,i)=>{
+    b.classList.toggle('active',['overview','history','profile'][i]===tab);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  SETUP MODAL
+// ═══════════════════════════════════════════════════
+let resumeData=null; // {fileName, text, skills:[]}
+function openSetup(){
+  document.getElementById('setup-modal').classList.add('show');
+  showSetupStep('mode');
+}
+function closeSetup(){document.getElementById('setup-modal').classList.remove('show');}
+function showSetupStep(step){
+  document.getElementById('setup-step-mode').classList.toggle('hidden',step!=='mode');
+  document.getElementById('setup-step-resume').classList.toggle('hidden',step!=='resume');
+  document.getElementById('setup-step-domain').classList.toggle('hidden',step!=='domain');
+}
+function chooseMode(mode){
+  showSetupStep(mode);
+  if(mode==='domain') populateRoles(document.querySelector('#setup-step-domain [data-cat].active')?.dataset.cat||'it');
+}
+function backToMode(){showSetupStep('mode');}
+
+function populateRoles(cat){
+  const grid=document.getElementById('role-grid');
+  const roles=ROLES[cat]||[];
+  grid.innerHTML=roles.map((r,i)=>
+    `<div class="role-chip${i===0?' active':''}" onclick="selectRole(this)" data-role="${r}">${r}</div>`
+  ).join('');
+}
+
+function selectRole(el){
+  document.querySelectorAll('.role-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectSeg(el,group){
+  el.closest('.seg-group').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  if(group==='cat') populateRoles(el.dataset.cat);
+}
+
+function getActive(group,attr){
+  const m={'cat':'.seg-group:nth-of-type(1)','type':'.seg-group:nth-of-type(3)','diff':'.seg-group:nth-of-type(4)','qn':'.seg-group:nth-of-type(5)'};
+  const el=document.querySelector(`${m[group]||'.seg-group'} .seg-btn.active`);
+  return el?el.dataset[attr]:'';
+}
+
+// ═══════════════════════════════════════════════════
+//  RESUME UPLOAD & PARSING
+// ═══════════════════════════════════════════════════
+const SKILL_MAP={
+  'Python Developer':['python','django','flask','pandas','numpy','pyspark'],
+  'Java Developer':['java','spring','hibernate','j2ee','springboot'],
+  'JavaScript / Frontend':['javascript','react','vue','angular','html','css','frontend','typescript'],
+  'Full Stack Developer':['full stack','fullstack','mern','node.js','nodejs','express'],
+  'Data Science / ML':['machine learning','data science','tensorflow','pytorch','scikit','deep learning','data scientist'],
+  'Data Structures & Algorithms':['data structures','algorithms','leetcode','competitive programming'],
+  'Database (SQL/DBMS)':['sql','mysql','postgres','dbms','oracle db','database administrator'],
+  'Operating Systems':['operating system','linux','unix kernel','os internals'],
+  'Computer Networks':['computer networks','tcp/ip','networking','dns','routing'],
+  'DevOps / Cloud':['devops','aws','azure','gcp','docker','kubernetes','ci/cd','jenkins','cloud engineer'],
+  'Cybersecurity':['cybersecurity','penetration testing','ethical hacking','infosec','security analyst'],
+  'Mobile Dev (Android/iOS)':['android','ios developer','kotlin','swift','flutter','react native'],
+  'C / C++':['c++','embedded systems','c programming'],
+  'System Design':['system design','microservices','scalability','distributed systems'],
+  'AI / Prompt Engineering':['prompt engineering','llm','gpt','chatbot','nlp','generative ai'],
+  'HR / Behavioral':['human resources','recruitment','talent acquisition','hr generalist'],
+  'Marketing Manager':['marketing','seo','campaign management','branding','digital marketing'],
+  'Sales Executive':['sales executive','business development','crm','lead generation'],
+  'Finance Analyst':['finance','accounting','financial analysis','financial modeling'],
+  'Business Analyst':['business analyst','requirements gathering','stakeholder management'],
+  'Content Writer':['content writing','copywriting','blogging','content strategy'],
+  'Operations Manager':['operations manager','supply chain management','process improvement'],
+  'Product Manager':['product management','product roadmap','agile','scrum master'],
+  'Customer Support':['customer support','helpdesk','customer service'],
+  'Logistics / Supply Chain':['logistics','supply chain','warehouse management']
+};
+function readFileAsText(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result||'');
+    reader.onerror=reject;
+    reader.readAsText(file);
+  });
+}
+async function handleResumeFile(file){
+  if(!file)return;
+  if(file.size>5*1024*1024){alert('File too large. Max 5MB.');return;}
+  document.getElementById('resume-file-name').textContent=file.name+' ('+(file.size/1024).toFixed(0)+' KB)';
+  document.getElementById('resume-file-chip').classList.remove('hidden');
+  document.getElementById('resume-drop-zone').classList.add('hidden');
+  let raw='';
+  try{ raw=await readFileAsText(file); }catch(e){ raw=''; }
+  // Strip non-printable bytes (best-effort for binary pdf/docx text streams)
+  const cleanText=(raw.match(/[\x20-\x7E\n]{4,}/g)||[]).join(' ');
+  const lower=cleanText.toLowerCase();
+  const detected=[];
+  Object.entries(SKILL_MAP).forEach(([role,keys])=>{
+    let hits=0;
+    keys.forEach(k=>{ if(lower.includes(k)) hits++; });
+    if(hits>0) detected.push({role,hits,keys:keys.filter(k=>lower.includes(k))});
+  });
+  detected.sort((a,b)=>b.hits-a.hits);
+  resumeData={fileName:file.name,text:cleanText,detected};
+  const tagsEl=document.getElementById('resume-skills');
+  const skillsWrap=document.getElementById('resume-skills-wrap');
+  if(detected.length){
+    const allKeys=[...new Set(detected.flatMap(d=>d.keys))].slice(0,12);
+    tagsEl.innerHTML=allKeys.map(k=>`<span class="resume-skill-tag">${k}</span>`).join('');
+    skillsWrap.classList.remove('hidden');
+  }else{
+    tagsEl.innerHTML=`<span class="resume-skill-tag">General / Mixed background</span>`;
+    skillsWrap.classList.remove('hidden');
+  }
+  const btn=document.getElementById('resume-start-btn');
+  btn.disabled=false;btn.textContent='Start Interview (20 Qs) →';
+}
+function clearResumeFile(){
+  resumeData=null;
+  document.getElementById('resume-file-input').value='';
+  document.getElementById('resume-file-chip').classList.add('hidden');
+  document.getElementById('resume-drop-zone').classList.remove('hidden');
+  document.getElementById('resume-skills-wrap').classList.add('hidden');
+  const btn=document.getElementById('resume-start-btn');
+  btn.disabled=true;btn.textContent='Upload a resume to continue';
+}
+
+// ═══════════════════════════════════════════════════
+//  START INTERVIEW
+// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  NO-REPEAT TRACKING (per user + domain + difficulty)
+// ═══════════════════════════════════════════════════
+function askedKey(role,diff){
+  const uid=currentUser?currentUser.id:'guest';
+  return `ltech_asked__${uid}__${role}__${diff}`;
+}
+function getAskedSet(role,diff){
+  try{ return new Set(JSON.parse(localStorage.getItem(askedKey(role,diff))||'[]')); }
+  catch(e){ return new Set(); }
+}
+function saveAskedSet(role,diff,set){
+  localStorage.setItem(askedKey(role,diff),JSON.stringify([...set]));
+}
+function markAsked(role,diff,questions){
+  const set=getAskedSet(role,diff);
+  questions.forEach(q=>set.add(q.q));
+  saveAskedSet(role,diff,set);
+}
+
+function buildPool(role,type,diff){
+  const bank=QB[role]||QB['HR / Behavioral'];
+  let pool=[];
+  const levels=['basic','intermediate','advanced'];
+  levels.forEach(l=>{ if(bank[l]) pool=pool.concat(bank[l].map(q=>({...q,level:l}))); });
+  if(type==='hr'){ const hrBank=QB['HR / Behavioral']; levels.forEach(l=>{ if(hrBank[l]) pool=pool.concat(hrBank[l].map(q=>({...q,level:l}))); }); }
+  // Merge in the ~200-question generated pool for this domain (and HR pool if mixed/hr)
+  pool=pool.concat(getDomainPool(role));
+  if(type==='hr') pool=pool.concat(getDomainPool('HR / Behavioral'));
+  // Dedup by question text
+  const seen=new Set();pool=pool.filter(q=>{ if(seen.has(q.q)) return false; seen.add(q.q); return true; });
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  return pool.filter(q=>diff==='basic'?q.level==='basic':diff==='intermediate'?q.level!=='advanced':true);
+}
+function pickNonRepeating(pool,role,diff,n){
+  const asked=getAskedSet(role,diff);
+  let fresh=pool.filter(q=>!asked.has(q.q));
+  let cycledReset=false;
+  if(fresh.length<n){
+    // Exhausted this domain/difficulty's pool — start a new cycle
+    saveAskedSet(role,diff,new Set());
+    fresh=pool;
+    cycledReset=true;
+  }
+  const chosen=fresh.slice(0,n);
+  markAsked(role,diff,chosen);
+  return {chosen,cycledReset};
+}
+function startInterview(mode){
+  let role,type,diff,qn,chosen,cycledReset=false;
+  if(mode==='domain'){
+    const roleEl=document.querySelector('#setup-step-domain .role-chip.active');
+    if(!roleEl){alert('Please select a role.');return;}
+    role=roleEl.dataset.role;
+    type=document.querySelector('#setup-step-domain [data-type].active')?.dataset.type||'technical';
+    diff=document.querySelector('#setup-step-domain [data-diff].active')?.dataset.diff||'basic';
+    qn=15;
+    const pool=buildPool(role,type,diff);
+    const picked=pickNonRepeating(pool,role,diff,qn);
+    chosen=picked.chosen;cycledReset=picked.cycledReset;
+  }else{ // resume
+    if(!resumeData){alert('Please upload your resume first.');return;}
+    type=document.querySelector('#setup-step-resume [data-type].active')?.dataset.type||'technical';
+    diff=document.querySelector('#setup-step-resume [data-diff].active')?.dataset.diff||'basic';
+    qn=20;
+    const top=resumeData.detected.slice(0,3).map(d=>d.role);
+    role=top[0]||'HR / Behavioral';
+    let combined=[];
+    (top.length?top:['HR / Behavioral']).forEach(r=>{ combined=combined.concat(buildPool(r,type,diff)); });
+    // Dedup by question text
+    const seen=new Set();combined=combined.filter(q=>{if(seen.has(q.q))return false;seen.add(q.q);return true;});
+    const picked=pickNonRepeating(combined,role,diff,qn-1);
+    chosen=picked.chosen;cycledReset=picked.cycledReset;
+    const introQ={q:'Walk me through your resume — your background, key projects, and what you bring to this role.',
+      code:null,ans:'Use the STAR/PAR method: brief background → 1-2 standout projects with measurable impact → skills that map directly to the role you are targeting. Keep it under 90 seconds.',
+      exp:'This is your chance to set the narrative. Tailor it to the job description and avoid simply re-reading your resume line by line.',output:null,level:'basic',resumeIntro:true};
+    chosen=[introQ,...chosen];
+  }
+  if(!chosen.length){alert('No questions for this selection. Try different settings.');return;}
+  if(cycledReset) alert('♻️ You\'ve completed every question in this set — starting a fresh cycle so you keep practicing without immediate repeats.');
+  session={role,type,diff,qn,questions:chosen,idx:0,history:[],active:true,mode};
+  closeSetup();
+  document.getElementById('ir-domain-badge').textContent=mode==='resume'?'📄 Resume: '+role.split(' ')[0]:role.split(' ')[0];
+  document.getElementById('ir-level-badge').textContent=diff==='basic'?'🟢 Basic':diff==='intermediate'?'🟡 Intermediate':'🔴 Advanced';
+  document.getElementById('ir-qtotal').textContent=chosen.length;
+  window.history.pushState(null,'',window.location.href);
+  showScreen('interview');showQuestion();
+  startMediaCapture();
+}
+
+function showQuestion(){
+  const q=session.questions[session.idx];
+  document.getElementById('ir-qnum').textContent=session.idx+1;
+  document.getElementById('ir-prog').style.width=(session.idx/session.questions.length*100)+'%';
+  ['ans-card','out-card','exp-card','timer-wrap','q-code','answer-input-wrap'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  document.getElementById('next-btn').classList.add('hidden');
+  document.getElementById('q-text').textContent='';
+  document.getElementById('q-phase').textContent='🤖 ARIA is asking...';
+  document.getElementById('answer-textarea').value='';
+  setAnswerMode('type');
+  setAI(true);speak('Question '+(session.idx+1)+'. '+q.q);
+  typeText('q-text',q.q,()=>{
+    if(q.code){const cb=document.getElementById('q-code');cb.innerHTML=q.code;cb.classList.remove('hidden');}
+    setAI(false);
+    document.getElementById('q-phase').textContent='⏳ Your turn — type or speak your answer within 1 minute';
+    document.getElementById('answer-input-wrap').classList.remove('hidden');
+    startTimer();
+  });
+  document.getElementById('q-panel').scrollTop=0;
+}
+function startTimer(){
+  timeLeft=TIMER_TOTAL;
+  document.getElementById('timer-wrap').classList.remove('hidden');
+  updateTimer();
+  if(timerInterval)clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInterval);revealAnswer();}},1000);
+}
+function updateTimer(){
+  const m=Math.floor(timeLeft/60),s=timeLeft%60;
+  document.getElementById('timer-num').textContent=`${m}:${s.toString().padStart(2,'0')}`;
+  const pct=timeLeft/TIMER_TOTAL*100;
+  const f=document.getElementById('timer-fill');
+  f.style.width=pct+'%';
+  f.style.background=timeLeft>30?'var(--green)':timeLeft>15?'var(--yellow)':'var(--red)';
+}
+function revealAnswer(userAnswer){
+  const q=session.questions[session.idx];
+  q.userAnswer=(userAnswer!==undefined?userAnswer:document.getElementById('answer-textarea').value.trim())||'(No answer given)';
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  if(isListening) toggleMic();
+  document.getElementById('timer-wrap').classList.add('hidden');
+  document.getElementById('answer-input-wrap').classList.add('hidden');
+  document.getElementById('q-phase').textContent='✅ Answer & Explanation';
+  document.getElementById('ans-body').textContent=q.ans;
+  document.getElementById('ans-card').classList.remove('hidden');
+  if(q.output){document.getElementById('out-body').textContent=q.output;document.getElementById('out-card').classList.remove('hidden');}
+  if(q.exp){document.getElementById('exp-body').textContent=q.exp;document.getElementById('exp-card').classList.remove('hidden');}
+  speak('The answer is: '+q.ans.split('.')[0]);
+  session.history.push(q);
+  const nb=document.getElementById('next-btn');
+  nb.textContent=session.idx<session.questions.length-1?'Next Question →':'🏁 Finish Interview';
+  nb.classList.remove('hidden');
+}
+function nextQuestion(){if(session.idx<session.questions.length-1){session.idx++;showQuestion();}else showResults();}
+function showResults(){
+  cancelSpeech();session.active=false;
+  stopMediaCapture(true);
+  const score=parseFloat((7+Math.random()*3).toFixed(1));
+  const rnd=()=>(Math.min(10,score*0.9+Math.random()*1.5)).toFixed(1);
+  document.getElementById('res-score').textContent=score.toFixed(1);
+  ['rm-tech','rm-clarity','rm-depth','rm-conf'].forEach(id=>document.getElementById(id).textContent=rnd());
+  document.getElementById('result-list').innerHTML=session.history.map((q,i)=>`
+    <div class="result-item fade-in">
+      <h4>Q${i+1}: ${q.q}</h4>
+      ${q.code?`<div class="code-block" style="margin-bottom:10px;">${q.code}</div>`:''}
+      ${q.userAnswer?`<div class="ri-ans" style="margin-bottom:6px;">🗣️ <strong>Your Answer:</strong> ${q.userAnswer}</div>`:''}
+      ${q.output?`<div class="out-card" style="margin-bottom:10px;padding:14px;"><div class="card-title ct-yellow">⚡ Output</div><div class="output-text">${q.output}</div></div>`:''}
+      <div class="ri-ans">✅ <strong>Expected Answer:</strong> ${q.ans}</div>
+      <div class="ri-exp">💡 ${q.exp||''}</div>
+    </div>`).join('');
+  const users=getUsers();const u=users[currentUser.id];
+  if(u){
+    u.history=u.history||[];
+    u.history.push({role:session.role,type:session.type,diff:session.diff,questions:session.history.length,score,date:new Date().toLocaleDateString()});
+    saveUsers(users);currentUser=u;
+  }
+  showScreen('results');
+}
+function goToDashboard(){showScreen('dashboard');refreshStats();renderHistory();}
+function practiceAgain(){showScreen('dashboard');openSetup();}
+function setAI(speaking){
+  document.getElementById('ai-avatar-wrap').classList.toggle('ai-speaking',speaking);
+  document.getElementById('voice-bars').classList.toggle('speaking',speaking);
+  document.getElementById('ai-status-text').textContent=speaking?'Speaking...':'Listening...';
+}
+function speak(text){
+  cancelSpeech();if(!window.speechSynthesis)return;setAI(true);
+  const u=new SpeechSynthesisUtterance(text);u.rate=0.92;u.pitch=1.0;u.volume=1;
+  u.onend=()=>setAI(false);window.speechSynthesis.speak(u);
+}
+function cancelSpeech(){if(window.speechSynthesis)window.speechSynthesis.cancel();setAI(false);}
+function typeText(elId,text,cb){
+  const el=document.getElementById(elId);el.textContent='';let i=0;
+  const cur=document.createElement('span');cur.className='tc';el.appendChild(cur);
+  const iv=setInterval(()=>{if(i<text.length){el.insertBefore(document.createTextNode(text[i]),cur);i++;}else{clearInterval(iv);cur.remove();if(cb)cb();}},15);
+}
+window.addEventListener('popstate',()=>{if(session.active){window.history.pushState(null,'',window.location.href);showAlert();}});
+document.addEventListener('visibilitychange',()=>{
+  if(session.active && document.hidden){
+    showAlert();
+    document.getElementById('tab-warn-banner').classList.add('show');
+    if(timerInterval){clearInterval(timerInterval);timerInterval=null;timerWasPausedByTab=true;}
+    pauseMediaCapture();
+  }
+});
+window.addEventListener('beforeunload',e=>{if(session.active){e.preventDefault();e.returnValue='Interview in progress!';}});
+function showAlert(){document.getElementById('alert-ov').classList.add('show');}
+function stayIn(){
+  document.getElementById('alert-ov').classList.remove('show');
+  document.getElementById('tab-warn-banner').classList.remove('show');
+  resumeMediaCapture();
+  if(timerWasPausedByTab){
+    timerWasPausedByTab=false;
+    if(timeLeft>0){
+      updateTimer();
+      timerInterval=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInterval);timerInterval=null;revealAnswer();}},1000);
+    }
+  }
+}
+function confirmEnd(){showAlert();}
+function leaveInterview(){
+  document.getElementById('alert-ov').classList.remove('show');session.active=false;cancelSpeech();
+  if(timerInterval)clearInterval(timerInterval);
+  stopMediaCapture(true);
+  showScreen('dashboard');
+}
+function showScreen(name){
+  ['register','login','dashboard','interview','results'].forEach(s=>{
+    const el=document.getElementById('screen-'+s);if(!el)return;
+    el.style.display='none';el.classList.add('hidden');
+  });
+  const el=document.getElementById('screen-'+name);if(!el)return;
+  el.classList.remove('hidden');
+  if(name==='dashboard')el.style.display='flex';
+  else if(name==='interview')el.style.display='flex';
+  else if(name==='results')el.style.display='block';
+  else el.style.display='';
+}
+function v(id){return document.getElementById(id).value.trim();}
+function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block';}
+function hideErr(id){document.getElementById(id).style.display='none';}
+
+// ═══════════════════════════════════════════════════
+//  SCREEN + WEBCAM RECORDING (Picture-in-Picture composite)
+// ═══════════════════════════════════════════════════
+async function startMediaCapture(){
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:{width:1280,height:720},audio:true});
+    const selfVideo=document.getElementById('self-cam-video');
+    selfVideo.srcObject=camStream;
+  }catch(e){
+    document.getElementById('cam-off-msg').classList.remove('hidden');
+  }
+  try{
+    screenStream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});
+  }catch(e){
+    screenStream=null; // user declined screen share — continue with webcam-only recording
+  }
+  if(!camStream && !screenStream) return; // nothing to record, interview continues fine
+
+  const canvas=document.createElement('canvas');
+  canvas.width=1280;canvas.height=720;
+  const ctx=canvas.getContext('2d');
+  const screenVideoEl=document.createElement('video');
+  if(screenStream){screenVideoEl.srcObject=screenStream;screenVideoEl.muted=true;screenVideoEl.play();}
+  const camVideoEl=document.createElement('video');
+  if(camStream){camVideoEl.srcObject=camStream;camVideoEl.muted=true;camVideoEl.play();}
+
+  function drawFrame(){
+    ctx.fillStyle='#07070f';ctx.fillRect(0,0,canvas.width,canvas.height);
+    if(screenStream && screenVideoEl.readyState>=2){
+      ctx.drawImage(screenVideoEl,0,0,canvas.width,canvas.height);
+    }
+    if(camStream && camVideoEl.readyState>=2){
+      const pw=screenStream?280:canvas.width, ph=screenStream?158:canvas.height;
+      const px=screenStream?canvas.width-pw-20:0, py=screenStream?canvas.height-ph-20:0;
+      ctx.save();
+      if(screenStream){ctx.strokeStyle='#3b82f6';ctx.lineWidth=3;ctx.strokeRect(px,py,pw,ph);}
+      ctx.drawImage(camVideoEl,px,py,pw,ph);
+      ctx.restore();
+    }
+    canvasRAF=requestAnimationFrame(drawFrame);
+  }
+  drawFrame();
+  canvasStream=canvas.captureStream(30);
+  const audioTracks=[];
+  if(camStream && camStream.getAudioTracks().length) audioTracks.push(...camStream.getAudioTracks());
+  const combined=new MediaStream([...canvasStream.getVideoTracks(),...audioTracks]);
+
+  try{
+    mediaRecorder=new MediaRecorder(combined,{mimeType:'video/webm;codecs=vp9,opus'});
+  }catch(e){
+    mediaRecorder=new MediaRecorder(combined);
+  }
+  recordedChunks=[];
+  mediaRecorder.ondataavailable=e=>{ if(e.data && e.data.size>0) recordedChunks.push(e.data); };
+  mediaRecorder.start(1000);
+  document.getElementById('rec-dot').classList.remove('hidden');
+}
+function pauseMediaCapture(){
+  if(mediaRecorder && mediaRecorder.state==='recording'){ try{mediaRecorder.pause();}catch(e){} }
+}
+function resumeMediaCapture(){
+  if(mediaRecorder && mediaRecorder.state==='paused'){ try{mediaRecorder.resume();}catch(e){} }
+}
+function stopMediaCapture(download){
+  if(canvasRAF) cancelAnimationFrame(canvasRAF);
+  if(mediaRecorder && mediaRecorder.state!=='inactive'){
+    mediaRecorder.onstop=()=>{
+      if(download && recordedChunks.length){
+        const blob=new Blob(recordedChunks,{type:'video/webm'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;a.download=`interview-recording-${Date.now()}.webm`;
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),5000);
+      }
+    };
+    try{mediaRecorder.stop();}catch(e){}
+  }
+  [camStream,screenStream].forEach(s=>{ if(s) s.getTracks().forEach(t=>t.stop()); });
+  camStream=null;screenStream=null;
+  document.getElementById('rec-dot').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════════════════
+//  ANSWER INPUT — TYPE OR SPEAK
+// ═══════════════════════════════════════════════════
+function setAnswerMode(mode){
+  answerMode=mode;
+  document.getElementById('mode-type-btn').classList.toggle('active',mode==='type');
+  document.getElementById('mode-speak-btn').classList.toggle('active',mode==='speak');
+  document.getElementById('mic-btn').classList.toggle('hidden',mode!=='speak');
+  if(mode==='type' && isListening) toggleMic();
+}
+function initRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR) return null;
+  const r=new SR();
+  r.continuous=true;r.interimResults=true;r.lang='en-US';
+  r.onresult=(ev)=>{
+    let finalText='';
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      if(ev.results[i].isFinal) finalText+=ev.results[i][0].transcript+' ';
+    }
+    if(finalText){
+      const ta=document.getElementById('answer-textarea');
+      ta.value=(ta.value+' '+finalText).trim();
+    }
+  };
+  r.onend=()=>{ if(isListening){ try{r.start();}catch(e){} } };
+  return r;
+}
+function toggleMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ alert('Speech recognition is not supported in this browser. Please type your answer instead.'); return; }
+  const btn=document.getElementById('mic-btn');
+  if(!isListening){
+    if(!recognition) recognition=initRecognition();
+    if(!recognition) return;
+    isListening=true;
+    try{recognition.start();}catch(e){}
+    btn.classList.add('listening');btn.textContent='⏹ Stop Listening';
+  }else{
+    isListening=false;
+    if(recognition){ try{recognition.stop();}catch(e){} }
+    btn.classList.remove('listening');btn.textContent='🎤 Start Speaking';
+  }
+}
+function submitAnswer(){
+  if(isListening) toggleMic();
+  const text=document.getElementById('answer-textarea').value.trim();
+  if(timerInterval) clearInterval(timerInterval);
+  revealAnswer(text);
+}
+
+showScreen('register');
+</script>
+</body>
+</html>
